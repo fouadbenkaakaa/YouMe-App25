@@ -18,6 +18,11 @@ import AIAssistantPage from "./pages/AIAssistantPage";
 import MapMarketPage from "./pages/MapMarketPage";
 import StorePage from "./pages/StorePage";
 import VerificationPage from "./pages/VerificationPage";
+import ReportPage from "./pages/ReportPage";
+import PaymentsPage from "./pages/PaymentsPage";
+import StarsPage from "./pages/StarsPage";
+import AtlasDeliveryPage from "./pages/AtlasDeliveryPage";
+import AtlasRidePage from "./pages/AtlasRidePage";
 
 function Shell() {
   const { isLoggedIn } = useApp();
@@ -49,6 +54,11 @@ function Shell() {
       case "ai-assistant":  return <AIAssistantPage />;
       case "store":         return <StorePage />;
       case "verification":  return <VerificationPage />;
+      case "report":        return <ReportPage />;
+      case "payments":      return <PaymentsPage />;
+      case "stars":         return <StarsPage />;
+      case "delivery":      return <AtlasDeliveryPage />;
+      case "ride":          return <AtlasRidePage />;
       default:              return <HomePage />;
     }
   };
