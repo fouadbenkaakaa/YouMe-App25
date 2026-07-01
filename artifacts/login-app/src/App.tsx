@@ -23,6 +23,7 @@ import PaymentsPage from "./pages/PaymentsPage";
 import StarsPage from "./pages/StarsPage";
 import AtlasDeliveryPage from "./pages/AtlasDeliveryPage";
 import AtlasRidePage from "./pages/AtlasRidePage";
+import AdminPage from "./pages/AdminPage";
 
 function Shell() {
   const { isLoggedIn } = useApp();
