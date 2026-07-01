@@ -1,6 +1,10 @@
-import { Home, Users, MessageCircle, Bell, Video, Search, User, Sun, Moon, ShoppingBag, LayoutGrid, LogOut, Menu, X, Sparkles, Radio, Store, Film } from "lucide-react";
-import { useApp } from "../context/AppContext";
 import { useState } from "react";
+import { Home, Users, MessageCircle, Bell, Search, User, Sun, Moon, ShoppingBag, LayoutGrid, LogOut, Menu, X, Sparkles, Radio, Store, Film, ShieldCheck } from "lucide-react";
+import { useApp } from "../context/AppContext";
+import VerificationBadge from "./VerificationBadge";
+import type { BadgeType } from "./VerificationBadge";
+
+const MY_BADGE: BadgeType = "blue";
 
 interface NavbarProps {
   currentPage: string;
@@ -16,7 +20,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
   const navItems = [
     { id: "home",          icon: Home,           label: "الرئيسية" },
     { id: "friends",       icon: Users,          label: "الأصدقاء" },
-    { id: "messages",      icon: MessageCircle,  label: "الرسائل",  badge: 7 },
+    { id: "messages",      icon: MessageCircle,  label: "الرسائل",   badge: 7 },
     { id: "notifications", icon: Bell,           label: "الإشعارات", badge: 3 },
     { id: "reels",         icon: Film,           label: "الريلز" },
     { id: "live",          icon: Radio,          label: "مباشر" },
@@ -29,11 +33,14 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
+
+        {/* Brand */}
         <div className="navbar-brand" onClick={() => go("home")}>
           <div className="brand-logo">A</div>
           <span className="brand-name">Atlas Social</span>
         </div>
 
+        {/* Search */}
         <div className="navbar-search">
           <Search size={16} />
           <input
@@ -45,6 +52,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
           />
         </div>
 
+        {/* Nav icons */}
         <div className="navbar-items">
           {navItems.map(item => (
             <button
@@ -59,6 +67,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
           ))}
         </div>
 
+        {/* Right actions */}
         <div className="navbar-actions">
           <button className="nav-ai-btn" onClick={() => go("ai-assistant")} title="المساعد الذكي">
             <Sparkles size={18} /> AI
@@ -68,24 +77,39 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
+          {/* Profile dropdown */}
           <div className="profile-dropdown-wrap">
             <button className="profile-avatar-btn" onClick={() => setProfileMenu(!profileMenu)}>
               <img src={user?.avatar} alt={user?.name} />
+              <span className="profile-btn-badge"><VerificationBadge type={MY_BADGE} size="sm" /></span>
             </button>
+
             {profileMenu && (
               <div className="profile-dropdown">
                 <div className="dropdown-header" onClick={() => go("profile")}>
-                  <img src={user?.avatar} alt={user?.name} />
+                  <div style={{ position: "relative", flexShrink: 0 }}>
+                    <img src={user?.avatar} alt={user?.name} />
+                    <span style={{ position: "absolute", bottom: -2, right: -2 }}>
+                      <VerificationBadge type={MY_BADGE} size="sm" />
+                    </span>
+                  </div>
                   <div>
-                    <div className="dropdown-name">{user?.name}</div>
+                    <div className="dropdown-name" style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                      {user?.name}
+                    </div>
                     <div className="dropdown-sub">عرض ملفك الشخصي</div>
                   </div>
                 </div>
+
                 <div className="dropdown-divider" />
                 <button className="dropdown-item" onClick={() => go("smart-search")}><Search size={16} /> البحث الذكي</button>
                 <button className="dropdown-item" onClick={() => go("store")}><Store size={16} /> متجري</button>
                 <button className="dropdown-item" onClick={() => go("map-market")}><span>🗺️</span> خريطة السوق</button>
                 <button className="dropdown-item" onClick={() => go("ai-assistant")}><Sparkles size={16} /> المساعد الذكي</button>
+                <button className="dropdown-item verify-item" onClick={() => go("verification")}>
+                  <ShieldCheck size={16} /> التحقق الرسمي
+                  <VerificationBadge type={MY_BADGE} size="sm" />
+                </button>
                 <button className="dropdown-item" onClick={() => go("settings")}><User size={16} /> الإعدادات والخصوصية</button>
                 <button className="dropdown-item" onClick={() => setDarkMode(!darkMode)}>
                   {darkMode ? <Sun size={16} /> : <Moon size={16} />}
@@ -103,6 +127,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
         </div>
       </div>
 
+      {/* Mobile menu */}
       {menuOpen && (
         <div className="mobile-nav-menu">
           {navItems.map(item => (
@@ -117,6 +142,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
           <button className="mobile-nav-item" onClick={() => go("ai-assistant")}><Sparkles size={20} /><span>المساعد الذكي</span></button>
           <button className="mobile-nav-item" onClick={() => go("store")}><Store size={20} /><span>متجري</span></button>
           <button className="mobile-nav-item" onClick={() => go("map-market")}><span>🗺️</span><span>خريطة السوق</span></button>
+          <button className="mobile-nav-item" onClick={() => go("verification")}><ShieldCheck size={20} /><span>التحقق الرسمي</span></button>
         </div>
       )}
     </nav>

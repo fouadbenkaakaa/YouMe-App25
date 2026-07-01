@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { Edit3, MapPin, Briefcase, Calendar, Users, UserCheck, FileText, Camera } from "lucide-react";
+import { Edit3, MapPin, Briefcase, Calendar, Users, UserCheck, Camera, ShieldCheck } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { MOCK_POSTS } from "../data/mockData";
 import Post from "../components/Post";
+import VerificationBadge from "../components/VerificationBadge";
+import type { BadgeType } from "../components/VerificationBadge";
 
-export default function ProfilePage() {
+// Demo: current user has a blue badge
+const MY_BADGE: BadgeType = "blue";
+
+export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: string) => void }) {
   const { user } = useApp();
   const [tab, setTab] = useState<"posts" | "about" | "friends" | "photos">("posts");
 
@@ -21,7 +26,10 @@ export default function ProfilePage() {
           <button className="change-avatar-btn"><Camera size={14} /></button>
         </div>
         <div className="profile-details">
-          <h1 className="profile-name">{user?.name}</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <h1 className="profile-name">{user?.name}</h1>
+            <VerificationBadge type={MY_BADGE} size="lg" showLabel />
+          </div>
           <p className="profile-bio">{user?.bio}</p>
           <div className="profile-stats">
             <div className="profile-stat">
@@ -40,15 +48,21 @@ export default function ProfilePage() {
         </div>
         <div className="profile-actions">
           <button className="btn-primary"><Edit3 size={16} /> تعديل الملف الشخصي</button>
+          <button
+            className="btn-verify-profile"
+            onClick={() => setCurrentPage && setCurrentPage("verification")}
+          >
+            <ShieldCheck size={16} /> طلب التحقق الرسمي
+          </button>
         </div>
       </div>
 
       <div className="tab-bar profile-tabs">
         {[
-          { id: "posts", label: "المنشورات" },
-          { id: "about", label: "معلومات عني" },
+          { id: "posts",   label: "المنشورات" },
+          { id: "about",   label: "معلومات عني" },
           { id: "friends", label: "الأصدقاء" },
-          { id: "photos", label: "الصور" },
+          { id: "photos",  label: "الصور" },
         ].map(t => (
           <button key={t.id} className={tab === t.id ? "active" : ""} onClick={() => setTab(t.id as any)}>
             {t.label}
@@ -69,6 +83,14 @@ export default function ProfilePage() {
                   <div className="info-item"><Calendar size={16} /> العمر: {user?.age} سنة</div>
                   <div className="info-item"><Users size={16} /> {user?.gender}</div>
                   <div className="info-item"><UserCheck size={16} /> {user?.maritalStatus}</div>
+                </div>
+                {/* Verification status mini-card */}
+                <div className="profile-badge-info">
+                  <VerificationBadge type={MY_BADGE} size="md" />
+                  <div>
+                    <div className="badge-info-label">حساب موثق رسمياً</div>
+                    <div className="badge-info-sub">شخصية عامة · Atlas Social</div>
+                  </div>
                 </div>
               </div>
               <div className="info-card">
@@ -109,23 +131,38 @@ export default function ProfilePage() {
                 <div className="about-item"><span>البريد الإلكتروني</span><strong>{user?.email}</strong></div>
               </div>
             </div>
+            <div className="about-section">
+              <h3>🛡️ التحقق والشارات</h3>
+              <div className="verify-about-card">
+                <VerificationBadge type={MY_BADGE} size="lg" showLabel />
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>حساب موثق · شخصية عامة</div>
+                  <div style={{ fontSize: 13, color: "var(--text2)" }}>تم التحقق من هذا الحساب بواسطة Atlas Social</div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {tab === "friends" && (
           <div className="friends-grid">
-            {Array.from({ length: 6 }, (_, i) => {
-              const names = ["سارة المنصور", "محمد العمري", "نورة الشمري", "عبدالله القحطاني", "لمياء السلمي", "طارق الغامدي"];
-              const seeds = ["sara", "mohammed", "noura", "abdullah", "lamia", "tarek"];
-              const bgs = ["ffdfbf", "d1d4f9", "c0aede", "b6e3f4", "b6e3f4", "ffdfbf"];
-              return (
-                <div key={i} className="friend-card">
-                  <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seeds[i]}&backgroundColor=${bgs[i]}`} alt={names[i]} className="friend-card-avatar" />
-                  <div className="friend-card-name">{names[i]}</div>
-                  <button className="btn-ghost-purple">💬 مراسلة</button>
+            {[
+              { name: "سارة المنصور",   seed: "sara",     bg: "ffdfbf", badge: "gray"   as BadgeType },
+              { name: "محمد العمري",    seed: "mohammed", bg: "d1d4f9", badge: "blue"   as BadgeType },
+              { name: "نورة الشمري",   seed: "noura",    bg: "c0aede", badge: null },
+              { name: "عبدالله القحطاني", seed: "ab",    bg: "b6e3f4", badge: "green"  as BadgeType },
+              { name: "لمياء السلمي",  seed: "lamia",    bg: "b6e3f4", badge: null },
+              { name: "طارق الغامدي",  seed: "tarek",    bg: "ffdfbf", badge: "gray"   as BadgeType },
+            ].map((f, i) => (
+              <div key={i} className="friend-card">
+                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.seed}&backgroundColor=${f.bg}`} alt={f.name} className="friend-card-avatar" />
+                <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "center" }}>
+                  <div className="friend-card-name">{f.name}</div>
+                  <VerificationBadge type={f.badge} size="sm" />
                 </div>
-              );
-            })}
+                <button className="btn-ghost-purple">💬 مراسلة</button>
+              </div>
+            ))}
           </div>
         )}
 
