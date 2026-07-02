@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Edit3, MapPin, Briefcase, Calendar, Users, UserCheck, Camera, ShieldCheck } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { MOCK_POSTS } from "../data/mockData";
@@ -6,25 +6,106 @@ import Post from "../components/Post";
 import VerificationBadge from "../components/VerificationBadge";
 import type { BadgeType } from "../components/VerificationBadge";
 
-// Demo: current user has a blue badge
 const MY_BADGE: BadgeType = "blue";
 
 export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: string) => void }) {
-  const { user } = useApp();
+  const { user, updateCover, updateAvatar } = useApp();
   const [tab, setTab] = useState<"posts" | "about" | "friends" | "photos">("posts");
+  const [showCoverOptions, setShowCoverOptions] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  // Only show posts authored by the logged-in user (by userId "1" = fouad)
+  const myPosts = MOCK_POSTS.filter(p => p.userId === "1");
+
+  const handleCoverFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    updateCover(url);
+    setShowCoverOptions(false);
+  };
+
+  const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    updateAvatar(url);
+  };
+
+  const PRESET_COVERS = [
+    "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+    "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80",
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+  ];
 
   return (
     <div className="profile-page">
+      {/* ── Cover photo ── */}
       <div className="profile-cover-wrap">
         <img src={user?.cover} alt="غلاف" className="profile-cover" />
-        <button className="change-cover-btn"><Camera size={16} /> تغيير صورة الغلاف</button>
+        <button className="change-cover-btn" onClick={() => setShowCoverOptions(true)}>
+          <Camera size={16} /> تغيير صورة الغلاف
+        </button>
+        {/* Hidden file input */}
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleCoverFile}
+        />
       </div>
 
+      {/* Cover picker modal */}
+      {showCoverOptions && (
+        <div className="checkout-overlay" onClick={() => setShowCoverOptions(false)}>
+          <div className="checkout-modal" style={{ maxWidth: 520 }} onClick={e => e.stopPropagation()}>
+            <h3>🖼️ تغيير صورة الغلاف</h3>
+            <div className="cover-presets-grid">
+              {PRESET_COVERS.map(url => (
+                <img
+                  key={url}
+                  src={url}
+                  alt="غلاف"
+                  className="cover-preset-thumb"
+                  onClick={() => { updateCover(url); setShowCoverOptions(false); }}
+                />
+              ))}
+            </div>
+            <div className="cover-upload-row">
+              <span style={{ fontSize: 13, color: "var(--text2)" }}>أو ارفع صورة من جهازك:</span>
+              <button className="btn-primary" style={{ fontSize: 13 }} onClick={() => coverInputRef.current?.click()}>
+                <Camera size={14} /> رفع صورة
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Info bar ── */}
       <div className="profile-info-bar">
         <div className="profile-avatar-wrap">
           <img src={user?.avatar} alt={user?.name} className="profile-avatar-lg" />
-          <button className="change-avatar-btn"><Camera size={14} /></button>
+          <button
+            className="change-avatar-btn"
+            title="تغيير الصورة الشخصية"
+            onClick={() => avatarInputRef.current?.click()}
+          >
+            <Camera size={14} />
+          </button>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleAvatarFile}
+          />
         </div>
+
         <div className="profile-details">
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <h1 className="profile-name">{user?.name}</h1>
@@ -33,7 +114,7 @@ export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: s
           <p className="profile-bio">{user?.bio}</p>
           <div className="profile-stats">
             <div className="profile-stat">
-              <span className="stat-num">{user?.postsCount}</span>
+              <span className="stat-num">{myPosts.length}</span>
               <span className="stat-label">منشور</span>
             </div>
             <div className="profile-stat">
@@ -46,6 +127,7 @@ export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: s
             </div>
           </div>
         </div>
+
         <div className="profile-actions">
           <button className="btn-primary"><Edit3 size={16} /> تعديل الملف الشخصي</button>
           <button
@@ -57,6 +139,7 @@ export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: s
         </div>
       </div>
 
+      {/* ── Tabs ── */}
       <div className="tab-bar profile-tabs">
         {[
           { id: "posts",   label: "المنشورات" },
@@ -70,7 +153,9 @@ export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: s
         ))}
       </div>
 
+      {/* ── Content ── */}
       <div className="profile-content">
+
         {tab === "posts" && (
           <div className="profile-posts-layout">
             <div className="profile-sidebar-info">
@@ -84,7 +169,6 @@ export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: s
                   <div className="info-item"><Users size={16} /> {user?.gender}</div>
                   <div className="info-item"><UserCheck size={16} /> {user?.maritalStatus}</div>
                 </div>
-                {/* Verification status mini-card */}
                 <div className="profile-badge-info">
                   <VerificationBadge type={MY_BADGE} size="md" />
                   <div>
@@ -103,10 +187,14 @@ export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: s
                 <div className="info-card-bio">{user?.friendsCount} صديق</div>
               </div>
             </div>
+
             <div className="profile-posts-list">
-              {MOCK_POSTS.slice(0, 2).map(post => (
-                <Post key={post.id} post={{ ...post, author: { ...post.author, name: user!.name, avatar: user!.avatar } }} />
-              ))}
+              {myPosts.length === 0 ? (
+                <div className="empty-state"><span>📝</span><p>لا توجد منشورات بعد</p></div>
+              ) : (
+                /* Render posts as-is — no author override */
+                myPosts.map(post => <Post key={post.id} post={post} />)
+              )}
             </div>
           </div>
         )}
@@ -147,12 +235,12 @@ export default function ProfilePage({ setCurrentPage }: { setCurrentPage?: (p: s
         {tab === "friends" && (
           <div className="friends-grid">
             {[
-              { name: "سارة المنصور",   seed: "sara",     bg: "ffdfbf", badge: "gray"   as BadgeType },
-              { name: "محمد العمري",    seed: "mohammed", bg: "d1d4f9", badge: "blue"   as BadgeType },
-              { name: "نورة الشمري",   seed: "noura",    bg: "c0aede", badge: null },
-              { name: "عبدالله القحطاني", seed: "ab",    bg: "b6e3f4", badge: "green"  as BadgeType },
-              { name: "لمياء السلمي",  seed: "lamia",    bg: "b6e3f4", badge: null },
-              { name: "طارق الغامدي",  seed: "tarek",    bg: "ffdfbf", badge: "gray"   as BadgeType },
+              { name: "سارة المنصور",      seed: "sara",     bg: "ffdfbf", badge: "gray"  as BadgeType },
+              { name: "محمد العمري",       seed: "mohammed", bg: "d1d4f9", badge: "blue"  as BadgeType },
+              { name: "نورة الشمري",      seed: "noura",    bg: "c0aede", badge: null },
+              { name: "عبدالله القحطاني", seed: "ab",       bg: "b6e3f4", badge: "green" as BadgeType },
+              { name: "لمياء السلمي",     seed: "lamia",    bg: "b6e3f4", badge: null },
+              { name: "طارق الغامدي",     seed: "tarek",    bg: "ffdfbf", badge: "gray"  as BadgeType },
             ].map((f, i) => (
               <div key={i} className="friend-card">
                 <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.seed}&backgroundColor=${f.bg}`} alt={f.name} className="friend-card-avatar" />

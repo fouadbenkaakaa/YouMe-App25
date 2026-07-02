@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppProvider, useApp } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
@@ -26,9 +26,14 @@ import AtlasRidePage from "./pages/AtlasRidePage";
 import AdminPage from "./pages/AdminPage";
 
 function Shell() {
-  const { isLoggedIn } = useApp();
+  const { isLoggedIn, registerNavigate } = useApp();
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [currentPage, setCurrentPage] = useState("home");
+
+  // Register the navigate function into context so any component can call navigateTo()
+  useEffect(() => {
+    registerNavigate(setCurrentPage);
+  }, [registerNavigate]);
 
   if (!isLoggedIn) {
     return authMode === "login"
@@ -60,6 +65,7 @@ function Shell() {
       case "stars":         return <StarsPage />;
       case "delivery":      return <AtlasDeliveryPage />;
       case "ride":          return <AtlasRidePage />;
+      case "admin":         return <AdminPage />;
       default:              return <HomePage />;
     }
   };

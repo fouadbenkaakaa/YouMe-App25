@@ -26,6 +26,10 @@ interface AppContextType {
   setDarkMode: (v: boolean) => void;
   login: (user: User) => void;
   logout: () => void;
+  updateCover: (url: string) => void;
+  updateAvatar: (url: string) => void;
+  navigateTo: (page: string) => void;
+  registerNavigate: (fn: (page: string) => void) => void;
 }
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -52,12 +56,27 @@ export const MOCK_USER: User = {
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [_navigate, setNavigateFn] = useState<((page: string) => void) | null>(null);
 
-  const login = (u: User) => setUser(u);
+  const login  = (u: User) => setUser(u);
   const logout = () => setUser(null);
 
+  const updateCover  = (url: string) => setUser(u => u ? { ...u, cover:  url } : u);
+  const updateAvatar = (url: string) => setUser(u => u ? { ...u, avatar: url } : u);
+
+  // Components call this once to register the navigation handler from Shell
+  const registerNavigate = (fn: (page: string) => void) =>
+    setNavigateFn(() => fn);
+
+  const navigateTo = (page: string) => {
+    if (_navigate) _navigate(page);
+  };
+
   return (
-    <AppContext.Provider value={{ user, isLoggedIn: !!user, darkMode, setDarkMode, login, logout }}>
+    <AppContext.Provider value={{
+      user, isLoggedIn: !!user, darkMode, setDarkMode,
+      login, logout, updateCover, updateAvatar, navigateTo, registerNavigate,
+    }}>
       <div className={darkMode ? "dark-mode" : "light-mode"}>
         {children}
       </div>
