@@ -1,0 +1,169 @@
+Continue improving YouMe and implement the following tasks without breaking existing functionality.
+
+==================================
+AUTHENTICATION & PROFILE
+==================================
+
+1. Replace the current login screens with the purple design from "Fouad Login Page".
+
+Requirements:
+- Arabic RTL support.
+- Elegant glassmorphism purple design (#6C3BFF).
+- Email login.
+- Phone login.
+- Registration.
+- Forgot password.
+- Biometric login button:
+  "تسجيل الدخول بالبصمة (قريباً)"
+- Keep all Supabase authentication logic.
+
+2. Automatically create a profile row in Supabase whenever a new user signs up.
+
+3. Remove the requirement for password_hash in the profiles table.
+Authentication must rely only on Supabase Auth.
+
+4. Make phone numbers optional in profiles.
+
+==================================
+USER PROFILES
+==================================
+
+5. Implement full profile pages for every user.
+
+Requirements:
+- Clicking any username or avatar opens that user's profile.
+- Show only that user's posts.
+- Display profile picture and cover image.
+- Add Follow / Unfollow buttons.
+- Show followers and following counts.
+- Add Edit Profile button for the profile owner.
+
+6. Cover photos:
+- Allow changing cover photos.
+- Upload from device.
+- Keep predefined gallery options.
+
+7. Profile pictures:
+- Allow changing profile images.
+- Sync changes across the entire application.
+
+==================================
+POSTS & COMMENTS
+==================================
+
+8. Ensure post ownership is permanently correct.
+Posts must always display the real author using owner_id.
+
+9. Implement a complete comments system:
+- Read comments.
+- Add comments.
+- Real-time updates.
+- Mobile-friendly scrolling.
+- Fixed comment input at the bottom.
+
+10. Add:
+- Delete own comment.
+- Edit own comment.
+- Report inappropriate comments.
+
+==================================
+ADMIN SYSTEM
+==================================
+
+11. Keep the existing administrator account.
+
+12. Improve admin capabilities:
+- Access to admin dashboard.
+- User management.
+- Post moderation.
+- Comment moderation.
+- Ban and unban users.
+- Temporary suspensions.
+- Feature management panel.
+
+13. Add future-ready roles:
+- Super Admin
+- Moderator
+- Verification Manager
+
+Do not enable advanced permissions yet.
+Only prepare the architecture.
+
+==================================
+SETTINGS & USER EXPERIENCE
+==================================
+
+14. Add Dark Mode persistence.
+The selected theme must remain after logout and app restart.
+
+15. Add:
+- Language selector:
+  Arabic
+  English
+  French
+
+16. Improve mobile responsiveness:
+- Better scrolling.
+- Better spacing.
+- Faster loading.
+- Touch-friendly buttons.
+
+17. Add loading states:
+- Login loading indicator.
+- Registration loading indicator.
+- Post publishing indicator.
+- Profile update indicator.
+
+18. Prevent duplicate actions:
+- Prevent double posting.
+- Prevent duplicate friend requests.
+- Prevent duplicate comments.
+- Prevent multiple login attempts.
+
+==================================
+SUPABASE IMPROVEMENTS
+==================================
+
+19. Review and fix all RLS policies:
+- profiles
+- posts
+- comments
+- friend_requests
+- messages
+- groups
+
+20. Ensure every table uses proper owner-based permissions.
+
+21. Add automatic timestamps:
+- created_at
+- updated_at
+
+22. Add triggers to update updated_at automatically.
+
+==================================
+DO NOT IMPLEMENT YET
+==================================
+
+Prepare but keep disabled:
+- TikTok-style videos.
+- Live streaming.
+- Verification badges.
+- Marketplace.
+- Delivery services.
+- Ride sharing.
+- Premium subscriptions.
+- Stars and gifts.
+- AI assistant.
+
+These features must remain accessible only through future admin settings.
+
+==================================
+GENERAL RULES
+==================================
+
+- Preserve the existing purple theme.
+- Preserve Arabic RTL support.
+- Preserve English and French support.
+- Do not create a new project.
+- Do not break existing Supabase integrations.
+- Keep the application scalable for future public release.

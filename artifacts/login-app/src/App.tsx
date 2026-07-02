@@ -8,6 +8,7 @@ import FriendsPage from "./pages/FriendsPage";
 import MessagesPage from "./pages/MessagesPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
+import UserProfilePage from "./pages/UserProfilePage";
 import MarketplacePage from "./pages/MarketplacePage";
 import GroupsPage from "./pages/GroupsPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -27,13 +28,10 @@ import AdminPage from "./pages/AdminPage";
 
 function Shell() {
   const { isLoggedIn, registerNavigate } = useApp();
-  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [authMode, setAuthMode]   = useState<"login" | "register">("login");
   const [currentPage, setCurrentPage] = useState("home");
 
-  // Register the navigate function into context so any component can call navigateTo()
-  useEffect(() => {
-    registerNavigate(setCurrentPage);
-  }, [registerNavigate]);
+  useEffect(() => { registerNavigate(setCurrentPage); }, [registerNavigate]);
 
   if (!isLoggedIn) {
     return authMode === "login"
@@ -52,6 +50,7 @@ function Shell() {
       case "reels":         return <ReelsPage />;
       case "live":          return <LivePage />;
       case "profile":       return <ProfilePage setCurrentPage={setCurrentPage} />;
+      case "user-profile":  return <UserProfilePage />;
       case "marketplace":   return <MarketplacePage />;
       case "map-market":    return <MapMarketPage />;
       case "groups":        return <GroupsPage />;

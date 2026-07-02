@@ -1,5 +1,8 @@
-import { useState, useRef, useEffect } from "react";
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Globe, Users, Lock, MapPin, Send, X } from "lucide-react";
+import { useState, useRef } from "react";
+import {
+  Heart, MessageCircle, Share2, Bookmark, MoreHorizontal,
+  Globe, Users, Lock, MapPin, Send, Pencil, Trash2, Flag, Check, X,
+} from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 interface CommentAuthor {
@@ -7,7 +10,6 @@ interface CommentAuthor {
   username: string;
   avatar: string;
 }
-
 interface Comment {
   id: string;
   userId: string;
@@ -16,78 +18,77 @@ interface Comment {
   time: string;
 }
 
-interface PostProps {
-  post: any;
-}
+export default function Post({ post }: { post: any }) {
+  const { user, navigateTo, setViewingUserId, t } = useApp();
 
-export default function Post({ post }: PostProps) {
-  const { user, navigateTo } = useApp();
-
-  const [liked, setLiked] = useState(post.liked);
-  const [likes, setLikes] = useState(post.likes);
-  const [saved, setSaved] = useState(post.saved);
+  const [liked, setLiked]               = useState(post.liked);
+  const [likes, setLikes]               = useState(post.likes);
+  const [saved, setSaved]               = useState(post.saved);
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Comment[]>(post.commentsList ?? []);
-  const [draft, setDraft] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const commentsEndRef = useRef<HTMLDivElement>(null);
+  const [comments, setComments]         = useState<Comment[]>(post.commentsList ?? []);
+  const [draft, setDraft]               = useState("");
+  const [editingId, setEditingId]       = useState<string | null>(null);
+  const [editDraft, setEditDraft]       = useState("");
+  const [posting, setPosting]           = useState(false);
+  const commentsEndRef                  = useRef<HTMLDivElement>(null);
 
-  const toggleLike = () => {
-    setLiked(!liked);
-    setLikes((l: number) => liked ? l - 1 : l + 1);
+  const toggleLike = () => { setLiked(!liked); setLikes((l: number) => liked ? l - 1 : l + 1); };
+
+  const openComments = () => setShowComments(v => !v);
+
+  /* Navigate to the author's profile */
+  const goToUser = (userId: string) => {
+    setViewingUserId(userId);
+    navigateTo("user-profile");
   };
 
-  const openComments = () => {
-    setShowComments(v => {
-      if (!v) {
-        // scroll input into view after render
-        setTimeout(() => inputRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);
-      }
-      return !v;
-    });
-  };
-
+  /* Send comment — debounced to prevent duplicates */
   const sendComment = () => {
-    if (!draft.trim() || !user) return;
-    const newComment: Comment = {
+    if (!draft.trim() || !user || posting) return;
+    setPosting(true);
+    const c: Comment = {
       id: `c-${Date.now()}`,
       userId: user.id,
       author: { name: user.name, username: user.username, avatar: user.avatar },
       text: draft.trim(),
       time: "الآن",
     };
-    setComments(prev => [...prev, newComment]);
+    setComments(prev => [...prev, c]);
     setDraft("");
-    // scroll to bottom of comments
-    setTimeout(() => commentsEndRef.current?.scrollIntoView({ behavior: "smooth" }), 80);
+    setTimeout(() => {
+      setPosting(false);
+      commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 400);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") sendComment();
+  /* Edit comment */
+  const startEdit = (c: Comment) => { setEditingId(c.id); setEditDraft(c.text); };
+  const saveEdit  = (id: string) => {
+    if (!editDraft.trim()) return;
+    setComments(prev => prev.map(c => c.id === id ? { ...c, text: editDraft.trim() } : c));
+    setEditingId(null);
   };
 
-  const goToProfile = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigateTo("profile");
-  };
+  /* Delete comment */
+  const deleteComment = (id: string) => setComments(prev => prev.filter(c => c.id !== id));
 
   const PrivacyIcon = post.privacy === "عام" ? Globe : post.privacy === "الأصدقاء فقط" ? Users : Lock;
 
   return (
     <div className="post-card">
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="post-header">
         <div className="post-author">
           <img
             src={post.author.avatar}
             alt={post.author.name}
             className="post-avatar post-avatar-clickable"
-            onClick={goToProfile}
+            onClick={() => goToUser(post.userId)}
           />
           <div>
             <div
               className="post-author-name post-author-name-clickable"
-              onClick={goToProfile}
+              onClick={() => goToUser(post.userId)}
             >
               {post.author.name}
             </div>
@@ -103,15 +104,13 @@ export default function Post({ post }: PostProps) {
         <button className="post-more"><MoreHorizontal size={20} /></button>
       </div>
 
-      {/* ── Body ── */}
+      {/* Body */}
       {post.text && <p className="post-text">{post.text}</p>}
-
       {post.image && (
         <div className="post-image-wrap">
           <img src={post.image} alt="منشور" className="post-image" />
         </div>
       )}
-
       {post.isPoll && (
         <div className="post-poll">
           {post.pollOptions.map((opt: any, i: number) => (
@@ -125,89 +124,111 @@ export default function Post({ post }: PostProps) {
         </div>
       )}
 
-      {/* ── Stats ── */}
+      {/* Stats */}
       <div className="post-stats">
         <span className="post-stat-likes">
           <span className="like-emoji">❤️</span> {likes.toLocaleString("ar-SA")}
         </span>
         <span className="post-stat-right">
-          <button onClick={openComments}>
-            {comments.length} تعليق
-          </button>
-          <span>{post.shares} مشاركة</span>
+          <button onClick={openComments}>{comments.length} {t("comment")}</button>
+          <span>{post.shares} {t("share")}</span>
         </span>
       </div>
 
       <div className="post-divider" />
 
-      {/* ── Actions ── */}
+      {/* Actions */}
       <div className="post-actions">
         <button className={`post-action-btn ${liked ? "liked" : ""}`} onClick={toggleLike}>
-          <Heart size={18} fill={liked ? "#e11d48" : "none"} /> إعجاب
+          <Heart size={18} fill={liked ? "#e11d48" : "none"} /> {t("like")}
         </button>
         <button className="post-action-btn" onClick={openComments}>
-          <MessageCircle size={18} /> تعليق
+          <MessageCircle size={18} /> {t("comment")}
         </button>
         <button className="post-action-btn">
-          <Share2 size={18} /> مشاركة
+          <Share2 size={18} /> {t("share")}
         </button>
         <button className={`post-action-btn ${saved ? "saved" : ""}`} onClick={() => setSaved(!saved)}>
-          <Bookmark size={18} fill={saved ? "#7c3aed" : "none"} /> حفظ
+          <Bookmark size={18} fill={saved ? "#7c3aed" : "none"} /> {t("save")}
         </button>
       </div>
 
-      {/* ── Comments Panel ── */}
+      {/* Comments panel */}
       {showComments && (
         <div className="post-comments">
-          {/* Existing comments */}
           <div className="comments-scroll-area">
             {comments.length === 0 && (
-              <div className="comments-empty">كن أول من يعلق ✨</div>
+              <div className="comments-empty">{t("noComments")}</div>
             )}
+
             {comments.map(c => (
               <div key={c.id} className="comment-item">
                 <img
                   src={c.author.avatar}
                   alt={c.author.name}
                   className="comment-avatar comment-avatar-clickable"
-                  onClick={goToProfile}
+                  onClick={() => goToUser(c.userId)}
                 />
-                <div className="comment-bubble">
-                  <span
-                    className="comment-name comment-name-clickable"
-                    onClick={goToProfile}
-                  >
-                    {c.author.name}
-                  </span>
-                  <span className="comment-text">{c.text}</span>
-                  <span className="comment-time">{c.time}</span>
+                <div className="comment-bubble" style={{ flex: 1 }}>
+                  {editingId === c.id ? (
+                    /* ── Inline edit ── */
+                    <div className="comment-edit-row">
+                      <input
+                        className="comment-edit-input"
+                        value={editDraft}
+                        autoFocus
+                        onChange={e => setEditDraft(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter") saveEdit(c.id); if (e.key === "Escape") setEditingId(null); }}
+                      />
+                      <button className="comment-edit-save"  onClick={() => saveEdit(c.id)}><Check size={14} /></button>
+                      <button className="comment-edit-cancel" onClick={() => setEditingId(null)}><X size={14} /></button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="comment-bubble-top">
+                        <span
+                          className="comment-name comment-name-clickable"
+                          onClick={() => goToUser(c.userId)}
+                        >
+                          {c.author.name}
+                        </span>
+                        {/* Own comment actions */}
+                        {user && c.userId === user.id && (
+                          <div className="comment-own-actions">
+                            <button className="comment-action-btn" title={t("editComment")}   onClick={() => startEdit(c)}><Pencil size={12} /></button>
+                            <button className="comment-action-btn danger" title={t("deleteComment")} onClick={() => deleteComment(c.id)}><Trash2 size={12} /></button>
+                          </div>
+                        )}
+                        {/* Report button for others' comments */}
+                        {user && c.userId !== user.id && (
+                          <button className="comment-action-btn" title={t("reportComment")} style={{ marginInlineStart: "auto" }}>
+                            <Flag size={12} />
+                          </button>
+                        )}
+                      </div>
+                      <span className="comment-text">{c.text}</span>
+                      <span className="comment-time">{c.time}</span>
+                    </>
+                  )}
                 </div>
               </div>
             ))}
             <div ref={commentsEndRef} />
           </div>
 
-          {/* Write a comment */}
-          <div className="comment-input-wrap" ref={inputRef as any}>
-            <img
-              src={user?.avatar}
-              alt={user?.name}
-              className="comment-avatar"
-            />
+          {/* Input */}
+          <div className="comment-input-wrap">
+            <img src={user?.avatar} alt="" className="comment-avatar" />
             <div className="comment-input-box">
               <input
                 type="text"
-                placeholder="اكتب تعليقاً..."
+                placeholder={t("writeComment")}
                 value={draft}
                 onChange={e => setDraft(e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={e => e.key === "Enter" && sendComment()}
               />
-              <button
-                className="comment-send"
-                disabled={!draft.trim()}
-                onClick={sendComment}
-              >
-                <Send size={16} />
+              <button className="comment-send" disabled={!draft.trim() || posting} onClick={sendComment}>
+                {posting ? <span className="spinner-xs" /> : <Send size={16} />}
               </button>
             </div>
           </div>

@@ -3736,3 +3736,209 @@ a { text-decoration: none; }
 @media (max-width: 520px) {
   .cover-presets-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ============================
+   LTR support (EN / FR)
+   ============================ */
+html[dir="ltr"] body,
+html[lang="en"] body,
+html[lang="fr"] body {
+  direction: ltr;
+  text-align: left;
+}
+html[dir="ltr"] .navbar-inner { direction: ltr; }
+html[dir="ltr"] .post-card,
+html[dir="ltr"] .auth-card,
+html[dir="ltr"] .profile-page { direction: ltr; text-align: left; }
+/* RTL stays default for Arabic */
+html[dir="rtl"] body { direction: rtl; text-align: right; }
+
+/* ============================
+   Comment edit / delete / report actions
+   ============================ */
+.comment-bubble-top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.comment-own-actions {
+  display: flex;
+  gap: 4px;
+  margin-inline-start: auto;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.comment-item:hover .comment-own-actions { opacity: 1; }
+
+.comment-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 5px;
+  border-radius: 6px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  transition: background 0.15s, color 0.15s;
+}
+.comment-action-btn:hover { background: var(--surface2); color: var(--primary); }
+.comment-action-btn.danger:hover { color: #ef4444; }
+
+/* Inline edit */
+.comment-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comment-edit-input {
+  flex: 1;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+  min-width: 0;
+}
+
+.comment-edit-save {
+  width: 28px; height: 28px;
+  border-radius: 50%; border: none;
+  background: #22c55e; color: #fff;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+.comment-edit-save:hover { opacity: 0.85; }
+
+.comment-edit-cancel {
+  width: 28px; height: 28px;
+  border-radius: 50%; border: none;
+  background: var(--surface2); color: var(--text2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.comment-edit-cancel:hover { background: var(--border); }
+
+/* ============================
+   Loading spinners
+   ============================ */
+.spinner-xs {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================
+   Language pill selector
+   ============================ */
+.settings-lang-row { flex-wrap: wrap; gap: 12px; }
+
+.lang-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lang-pill {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-pill.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  font-weight: 700;
+}
+.lang-pill:not(.active):hover { border-color: var(--primary); color: var(--primary); }
+
+/* ============================
+   Follow / Unfollow button (already in btn-primary / btn-ghost-purple)
+   but ensure the row aligns properly
+   ============================ */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+@media (max-width: 600px) {
+  .profile-actions { flex-direction: row; flex-wrap: wrap; }
+}
+
+/* ============================
+   User profile page — follow count small screens
+   ============================ */
+@media (max-width: 480px) {
+  .profile-info-bar { flex-direction: column; align-items: center; text-align: center; }
+  .profile-stats { justify-content: center; }
+  .profile-details { align-items: center; }
+  .profile-actions { align-items: center; }
+}
+
+/* ============================
+   Loading state for compose button
+   ============================ */
+.composer-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.composer-submit { display: flex; align-items: center; gap: 6px; }
+
+/* ============================
+   Admin — role architecture badges
+   ============================ */
+.role-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.role-super_admin  { background: #7c3aed22; color: #7c3aed; border: 1px solid #7c3aed44; }
+.role-admin        { background: #2563eb22; color: #2563eb; border: 1px solid #2563eb44; }
+.role-moderator    { background: #05966922; color: #059669; border: 1px solid #05966944; }
+.role-verification_manager { background: #d9780622; color: #d97806; border: 1px solid #d9780644; }
+.role-user         { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+/* ============================
+   Mobile scrolling improvements
+   ============================ */
+@media (max-width: 768px) {
+  .page-wrapper { overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+  .post-card   { border-radius: 0; border-inline: none; }
+  .home-feed   { padding: 0; }
+  .post-actions .post-action-btn { font-size: 12px; gap: 4px; padding: 7px 6px; }
+}
