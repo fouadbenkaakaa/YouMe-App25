@@ -1,3 +1,7 @@
+import Header from "../components/Home/Header";
+import WeatherCard from "../components/Home/WeatherCard";
+import LevelCard from "../components/Home/LevelCard";
+import IconGrid from "../components/Home/IconGrid";
 import { useState } from "react";
 import { Image, Video, MapPin, BarChart2, Globe, Users, Lock, ChevronDown, Plus } from "lucide-react";
 import { useApp } from "../context/AppContext";
@@ -62,6 +66,14 @@ export default function HomePage() {
       </aside>
 
       <main className="home-feed">
+        <Header />
+
+        <WeatherCard />
+
+        <LevelCard />
+
+        <IconGrid />
+
         {/* Stories */}
         <div className="stories-bar">
           <div className="story-add">

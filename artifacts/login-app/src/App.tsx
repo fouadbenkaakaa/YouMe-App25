@@ -25,6 +25,8 @@ import StarsPage from "./pages/StarsPage";
 import AtlasDeliveryPage from "./pages/AtlasDeliveryPage";
 import AtlasRidePage from "./pages/AtlasRidePage";
 import AdminPage from "./pages/AdminPage";
+import BooksPage from "./pages/BooksPage";
+import GamesPage from "./pages/GamesPage"; // ← جديد
 
 function Shell() {
   const { isLoggedIn, registerNavigate } = useApp();
@@ -64,6 +66,8 @@ function Shell() {
       case "stars":         return <StarsPage />;
       case "delivery":      return <AtlasDeliveryPage />;
       case "ride":          return <AtlasRidePage />;
+      case "books":         return <BooksPage />;
+      case "games":         return <GamesPage />; // ← جديد
       case "admin":         return <AdminPage />;
       default:              return <HomePage />;
     }

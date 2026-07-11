@@ -33,7 +33,14 @@ const LANG_OPTIONS: { code: Lang; label: string; native: string }[] = [
 ];
 
 export default function SettingsPage() {
-  const { darkMode, setDarkMode, language, setLanguage, t } = useApp();
+  const {
+    darkMode,
+    setDarkMode,
+    language,
+    setLanguage,
+    t,
+    logout,
+  } = useApp();
   const [section, setSection] = useState<string | null>(null);
   const [privacy, setPrivacy] = useState({ showPhone: false, showAge: true, showMarital: false, hideLastSeen: false, twoFactor: false });
   const [notifs,  setNotifs]  = useState({ messages: true, friendRequests: true, comments: true, likes: true, mentions: true });
@@ -91,7 +98,13 @@ export default function SettingsPage() {
           </div>
           <div className="settings-row">
             <div className="settings-row-label">تسجيل الخروج من جميع الأجهزة</div>
-            <button className="btn-ghost" style={{ color: "#ef4444" }}>خروج</button>
+            <button
+              className="btn-ghost"
+              style={{ color: "#ef4444" }}
+              onClick={() => logout()}
+            >
+              خروج
+            </button>
           </div>
         </div>
       )}
