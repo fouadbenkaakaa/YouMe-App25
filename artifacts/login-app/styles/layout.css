@@ -1,0 +1,71 @@
+/* ==========================================
+   YouMe v2 - Home Layout
+========================================== */
+
+.home-layout {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr) 340px;
+    gap: 24px;
+
+    max-width: 1600px;
+    margin: 0 auto;
+
+    padding: 24px;
+    align-items: start;
+}
+
+.left-panel,
+.center-panel,
+.right-panel {
+    min-height: calc(100vh - 90px);
+}
+
+.left-panel {
+    position: sticky;
+    top: 84px;
+}
+
+.right-panel {
+    position: sticky;
+    top: 84px;
+}
+
+.center-panel {
+    width: 100%;
+}
+
+/* Tablet */
+
+@media (max-width:1200px){
+
+    .home-layout{
+        grid-template-columns:260px 1fr;
+    }
+
+    .right-panel{
+        display:none;
+    }
+
+}
+
+/* Mobile */
+
+@media (max-width:768px){
+
+    .home-layout{
+
+        grid-template-columns:1fr;
+
+        padding:12px;
+
+        gap:18px;
+
+    }
+
+    .left-panel{
+
+        display:none;
+
+    }
+
+}
