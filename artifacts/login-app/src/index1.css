@@ -267,7 +267,7 @@ a { text-decoration: none; }
 @media (max-width: 768px) {
   .navbar-items { display: none; }
   .mobile-menu-btn { display: flex; }
-  .navbar-search { flex: 1; min-width: 0; }
+  .navbar-search { flex: 1; }
   .brand-name { display: none; }
 
   /* .mobile-nav-menu { display: flex; flex-wrap: wrap; gap: 4px; } */
