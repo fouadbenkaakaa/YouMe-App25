@@ -1,6 +1,4 @@
 import "./YouMe_Navbar.css";
-import ProfileDrawer from "./ProfileDrawer";
-import "./ProfileDrawer.css";
 import { useState } from "react";
 import {
   Home, Users, MessageCircle, Bell, Search, User, Sun, Moon,
@@ -116,22 +114,80 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          {/* Profile Drawer */}
-          <ProfileDrawer
-            isOpen={profileMenu}
-            onClose={() => setProfileMenu(false)}
-          />
+          {/* Profile Dropdown */}
+          <div className="profile-dropdown-wrap">
+            <button className="profile-avatar-btn" onClick={() => setProfileMenu(!profileMenu)} title="الملف الشخصي">
+              <img src={user?.avatar} alt={user?.name} />
+              <span className="profile-btn-badge"><VerificationBadge type={MY_BADGE} size="sm" /></span>
+            </button>
 
-          <button
-            className="profile-avatar-btn"
-            onClick={() => setProfileMenu(!profileMenu)}
-            title="الملف الشخصي"
-          >
-            <img src={user?.avatar} alt={user?.name} />
-            <span className="profile-btn-badge">
-              <VerificationBadge type={MY_BADGE} size="sm" />
-            </span>
-          </button>
+            <div className={`profile-dropdown ${profileMenu ? "open" : ""}`}>
+              <div className="dropdown-header" onClick={() => go("profile")}>
+                <div style={{ position: "relative", flexShrink: 0 }}>
+                  <img src={user?.avatar} alt={user?.name} />
+                  <span style={{ position: "absolute", bottom: -2, right: -2 }}>
+                    <VerificationBadge type={MY_BADGE} size="sm" />
+                  </span>
+                </div>
+                <div>
+                  <div className="dropdown-name">{user?.name}</div>
+                  <div className="dropdown-sub">عرض ملفك الشخصي</div>
+                </div>
+              </div>
+
+              <div className="dropdown-divider" />
+
+              {/* Navigation shortcuts */}
+              <button className="dropdown-item" onClick={() => go("smart-search")}>
+                <Search size={16} style={{ color: "#7C3AED" }} /> البحث الذكي
+              </button>
+              <button className="dropdown-item" onClick={() => go("store")}>
+                <Store size={16} style={{ color: "#F59E0B" }} /> متجري
+              </button>
+              <button className="dropdown-item" onClick={() => go("map-market")}>
+                <span style={{ fontSize: 16, color: "#10B981" }}>🗺️</span> خريطة السوق
+              </button>
+              <button className="dropdown-item" onClick={() => go("ai-assistant")}>
+                <Sparkles size={16} style={{ color: "#7C3AED" }} /> المساعد الذكي
+              </button>
+
+              <div className="dropdown-divider" />
+              <div className="dropdown-section-label">الخدمات</div>
+              <button className="dropdown-item" onClick={() => go("payments")}>
+                <CreditCard size={16} style={{ color: "#10B981" }} /> الاشتراكات والمدفوعات
+              </button>
+              <button className="dropdown-item" onClick={() => go("stars")}>
+                <Star size={16} style={{ color: "#FBBF24" }} /> النجوم والهدايا
+              </button>
+              <button className="dropdown-item" onClick={() => go("delivery")}>
+                <Truck size={16} style={{ color: "#3B82F6" }} /> YouMe Delivery
+              </button>
+              <button className="dropdown-item" onClick={() => go("ride")}>
+                <Car size={16} style={{ color: "#EF4444" }} /> YouMe Ride
+              </button>
+
+              <div className="dropdown-divider" />
+              <div className="dropdown-section-label">الحساب</div>
+              <button className="dropdown-item verify-item" onClick={() => go("verification")}>
+                <ShieldCheck size={16} style={{ color: "#3B82F6" }} /> التحقق الرسمي <VerificationBadge type={MY_BADGE} size="sm" />
+              </button>
+              <button className="dropdown-item" onClick={() => go("report")}>
+                <Flag size={16} style={{ color: "#EF4444" }} /> الإبلاغ عن مخالفة
+              </button>
+              <button className="dropdown-item" onClick={() => go("settings")}>
+                <User size={16} style={{ color: "#8B5CF6" }} /> الإعدادات والخصوصية
+              </button>
+              <button className="dropdown-item" onClick={() => setDarkMode(!darkMode)}>
+                {darkMode ? <Sun size={16} style={{ color: "#F59E0B" }} /> : <Moon size={16} style={{ color: "#6366F1" }} />}
+                {darkMode ? "وضع النهار" : "وضع الليل"}
+              </button>
+
+              <div className="dropdown-divider" />
+              <button className="dropdown-item logout" onClick={logout}>
+                <LogOut size={16} /> تسجيل الخروج
+              </button>
+            </div>
+          </div>
 
           {/* Mobile Menu Toggle */}
           <button className="icon-btn mobile-menu-btn" onClick={() => setMenuOpen(!menuOpen)} title="القائمة">

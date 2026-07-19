@@ -200,7 +200,8 @@ a { text-decoration: none; }
 
 .profile-dropdown {
   position: absolute;
-  top: 44px; left: 0;
+  top: 52px; right: 0;
+  left: auto;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
