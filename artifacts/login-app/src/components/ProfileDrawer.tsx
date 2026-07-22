@@ -61,22 +61,9 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
     { icon: darkMode ? Sun : Moon, label: darkMode ? "وضع النهار" : "وضع الليل", action: () => setDarkMode(!darkMode), isSwitch: true },
     { icon: HelpCircle, label: "المساعدة والدعم", action: () => go("support") },
   ];
-
+console.log("ProfileDrawer isOpen =", isOpen);
   return (
-    <><div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          zIndex: 99999,
-          background: "red",
-          color: "white",
-          padding: "10px",
-          fontWeight: "bold",
-        }}
-      >
-        PROFILE DRAWER
-      </div>
+    <>
       <div className={`ympd-backdrop${isOpen ? " ympd-open" : ""}`} onClick={onClose} />
 
       <div className={`ympd-drawer${isOpen ? " ympd-open" : ""}`} dir="rtl">
