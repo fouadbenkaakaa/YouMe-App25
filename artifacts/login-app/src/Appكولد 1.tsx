@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { AppProvider, useApp } from "./context/AppContext";
 import Navbar from "./components/Navbar";
-import ProfileDrawer from "./components/ProfileDrawer";
-import "./components/ProfileDrawer.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
@@ -34,7 +32,6 @@ function Shell() {
   const { isLoggedIn, registerNavigate } = useApp();
   const [authMode, setAuthMode]   = useState<"login" | "register">("login");
   const [currentPage, setCurrentPage] = useState("home");
-  const [profileMenu, setProfileMenu] = useState(false);
 
   useEffect(() => { registerNavigate(setCurrentPage); }, [registerNavigate]);
 
@@ -78,18 +75,9 @@ function Shell() {
 
   return (
     <div className="app-shell">
-      <Navbar
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        profileMenu={profileMenu}
-        onToggleProfileMenu={() => setProfileMenu(v => !v)}
-        onCloseProfileMenu={() => setProfileMenu(false)}
-      />
-      <div className="app-body-row">
-        <ProfileDrawer isOpen={profileMenu} onClose={() => setProfileMenu(false)} />
-        <div className={`page-wrapper ${isFullScreen ? "fullscreen-page" : ""}`}>
-          {renderPage()}
-        </div>
+      <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <div className={`page-wrapper ${isFullScreen ? "fullscreen-page" : ""}`}>
+        {renderPage()}
       </div>
     </div>
   );

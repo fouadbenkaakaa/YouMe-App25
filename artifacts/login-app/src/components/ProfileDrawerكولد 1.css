@@ -25,9 +25,7 @@
   top: calc(var(--navbar-h, 60px) + 10px);
   right: 0;
   left: auto;
-  width: min(360px, 28vw);
-  max-width: 360px;
-  min-width: 320px;
+  width: min(220px, 62vw);
   height: calc(100vh - 80px);
   border-radius: 18px 0 0 18px;
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
@@ -455,8 +453,8 @@
 
 @media (max-width: 768px) {
   .ympd-drawer {
-    width: 72vw;
-    max-width: 260px;
+    width: 62vw;
+    max-width: 220px;
   }
 
   .ympd-services-grid {

@@ -1,9 +1,13 @@
 import "./YouMe_Navbar.css";
+import ProfileDrawer from "./ProfileDrawer";
+import "./ProfileDrawer.css";
 import { useState } from "react";
 import {
-  Home, Users, MessageCircle, Bell, Search, Sun, Moon,
-  ShoppingBag, LayoutGrid, Menu, X, Sparkles, Radio,
-  Film, BookOpen, Gamepad2
+  Home, Users, MessageCircle, Bell, Search, User, Sun, Moon,
+  ShoppingBag, LayoutGrid, LogOut, Menu, X, Sparkles, Radio,
+  Store, Film, ShieldCheck, Flag, CreditCard, Star, Truck, Car,
+  BookOpen,
+  Gamepad2
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import VerificationBadge from "./VerificationBadge";
@@ -39,14 +43,13 @@ function YouMeLogo({ size = 38 }: { size?: number }) {
 interface NavbarProps {
   currentPage: string;
   setCurrentPage: (page: string) => void;
-  profileMenu: boolean;
-  onToggleProfileMenu: () => void;
-  onCloseProfileMenu: () => void;
 }
 
-export default function Navbar({ currentPage, setCurrentPage, profileMenu, onToggleProfileMenu, onCloseProfileMenu }: NavbarProps) {
+export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
   const { user, darkMode, setDarkMode, logout } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [profileMenu, setProfileMenu] = useState(false);
 
   const navItems = [
     { id: "home",          icon: Home,          label: "الرئيسية" },
@@ -61,7 +64,7 @@ export default function Navbar({ currentPage, setCurrentPage, profileMenu, onTog
     { id: "games",         icon: Gamepad2,      label: "ألعاب" },
   ];
 
-  const go = (page: string) => { setCurrentPage(page); onCloseProfileMenu(); };
+  const go = (page: string) => { setCurrentPage(page); setMenuOpen(false); setProfileMenu(false); };
 
   return (
     <nav className="navbar">
@@ -113,20 +116,50 @@ export default function Navbar({ currentPage, setCurrentPage, profileMenu, onTog
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          {/* Profile Drawer الآن يُعرَض من App.tsx مباشرة بجانب محتوى الصفحة، وليس هنا */}
+          {/* Profile Drawer */}
+          <ProfileDrawer
+            isOpen={profileMenu}
+            onClose={() => setProfileMenu(false)}
+          />
 
-          <div className="profile-avatar-btn" title={user?.name}>
+          <button
+            className="profile-avatar-btn"
+            onClick={() => setProfileMenu(!profileMenu)}
+            title="الملف الشخصي"
+          >
             <img src={user?.avatar} alt={user?.name} />
             <span className="profile-btn-badge">
               <VerificationBadge type={MY_BADGE} size="sm" />
             </span>
-          </div>
+          </button>
 
-          {/* Menu Toggle — يفتح القائمة الموحّدة (ProfileDrawer المُعرَّفة في App.tsx) */}
-          <button className="icon-btn mobile-menu-btn" onClick={onToggleProfileMenu} title="القائمة">
-            {profileMenu ? <X size={22} /> : <Menu size={22} />}
+          {/* Mobile Menu Toggle */}
+          <button className="icon-btn mobile-menu-btn" onClick={() => setMenuOpen(!menuOpen)} title="القائمة">
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
+      </div>
+
+      {/* ── Mobile Nav Menu ── */}
+      <div className={`mobile-nav-menu ${menuOpen ? "open" : ""}`}>
+        {navItems.map(item => (
+          <button key={item.id} className={`mobile-nav-item ${currentPage === item.id ? "active" : ""}`}
+            onClick={() => go(item.id)}>
+            <item.icon size={20} />
+            <span>{item.label}</span>
+            {item.badge && <span className="mobile-badge">{item.badge}</span>}
+          </button>
+        ))}
+        <button className="mobile-nav-item" onClick={() => go("smart-search")}><Search size={20} /><span>البحث الذكي</span></button>
+        <button className="mobile-nav-item" onClick={() => go("ai-assistant")}><Sparkles size={20} /><span>المساعد الذكي</span></button>
+        <button className="mobile-nav-item" onClick={() => go("store")}><Store size={20} /><span>متجري</span></button>
+        <button className="mobile-nav-item" onClick={() => go("map-market")}><span>🗺️</span><span>خريطة السوق</span></button>
+        <button className="mobile-nav-item" onClick={() => go("payments")}><CreditCard size={20} /><span>المدفوعات</span></button>
+        <button className="mobile-nav-item" onClick={() => go("stars")}><Star size={20} /><span>النجوم والهدايا</span></button>
+        <button className="mobile-nav-item" onClick={() => go("delivery")}><Truck size={20} /><span>YouMe Delivery</span></button>
+        <button className="mobile-nav-item" onClick={() => go("ride")}><Car size={20} /><span>YouMe Ride</span></button>
+        <button className="mobile-nav-item" onClick={() => go("verification")}><ShieldCheck size={20} /><span>التحقق الرسمي</span></button>
+        <button className="mobile-nav-item" onClick={() => go("report")}><Flag size={20} /><span>إبلاغ</span></button>
       </div>
     </nav>
   );

@@ -51,13 +51,22 @@ a { text-decoration: none; }
    ============================ */
 .app-shell { min-height: 100vh; background: var(--bg); }
 
+.app-body-row {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: stretch;
+  margin-top: var(--navbar-h);
+  min-height: calc(100vh - var(--navbar-h));
+}
+
 .page-wrapper {
-  padding-top: var(--navbar-h);
-  min-height: 100vh;
+  flex: 1;
+  min-width: 0;
+  min-height: calc(100vh - var(--navbar-h));
 }
 
 .page-wrapper.messages-page {
-  height: 100vh;
+  height: calc(100vh - var(--navbar-h));
   overflow: hidden;
 }
 
@@ -1692,8 +1701,7 @@ a { text-decoration: none; }
    Fullscreen pages
    ============================ */
 .page-wrapper.fullscreen-page {
-  padding-top: var(--navbar-h);
-  height: 100vh;
+  height: calc(100vh - var(--navbar-h));
   overflow: hidden;
 }
 

@@ -3,50 +3,30 @@
    All selectors use unique "ympd-" prefix
    ═══════════════════════════════════════════════════════════ */
 
-.ympd-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 1999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.ympd-backdrop.ympd-open {
-  opacity: 1;
-  visibility: visible;
-}
-
 .ympd-drawer {
-  position: fixed;
-  top: calc(var(--navbar-h, 60px) + 10px);
-  right: 0;
-  left: auto;
-  width: min(260px, 72vw);
-  height: calc(100vh - 80px);
-  border-radius: 18px 0 0 18px;
+  position: relative;
+  top: 0;
+  right: auto;
+  left: 0;
+  width: 0;
+  flex-shrink: 0;
+  height: calc(100vh - var(--navbar-h, 60px));
+  border-radius: 0 18px 18px 0;
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-  z-index: 2000;
+  z-index: 500;
   overflow-y: auto;
   overflow-x: hidden;
-  transform: translateX(100%);
-  opacity: 0;
-  visibility: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.3s ease,
-              visibility 0.3s ease;
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,0.15) transparent;
   padding-bottom: 80px;
 }
 
 .ympd-drawer.ympd-open {
-  transform: translateX(0);
-  opacity: 1;
-  visibility: visible;
+  width: min(220px, 62vw);
 }
 
 .ympd-drawer::-webkit-scrollbar {
@@ -452,9 +432,9 @@
    ═══════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  .ympd-drawer {
-    width: 72vw;
-    max-width: 260px;
+  .ympd-drawer.ympd-open {
+    width: 62vw;
+    max-width: 220px;
   }
 
   .ympd-services-grid {

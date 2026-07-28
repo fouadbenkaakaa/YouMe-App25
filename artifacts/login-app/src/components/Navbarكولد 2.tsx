@@ -1,4 +1,6 @@
 import "./YouMe_Navbar.css";
+import ProfileDrawer from "./ProfileDrawer";
+import "./ProfileDrawer.css";
 import { useState } from "react";
 import {
   Home, Users, MessageCircle, Bell, Search, Sun, Moon,
@@ -39,14 +41,12 @@ function YouMeLogo({ size = 38 }: { size?: number }) {
 interface NavbarProps {
   currentPage: string;
   setCurrentPage: (page: string) => void;
-  profileMenu: boolean;
-  onToggleProfileMenu: () => void;
-  onCloseProfileMenu: () => void;
 }
 
-export default function Navbar({ currentPage, setCurrentPage, profileMenu, onToggleProfileMenu, onCloseProfileMenu }: NavbarProps) {
+export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
   const { user, darkMode, setDarkMode, logout } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
+  const [profileMenu, setProfileMenu] = useState(false);
 
   const navItems = [
     { id: "home",          icon: Home,          label: "الرئيسية" },
@@ -61,7 +61,7 @@ export default function Navbar({ currentPage, setCurrentPage, profileMenu, onTog
     { id: "games",         icon: Gamepad2,      label: "ألعاب" },
   ];
 
-  const go = (page: string) => { setCurrentPage(page); onCloseProfileMenu(); };
+  const go = (page: string) => { setCurrentPage(page); setProfileMenu(false); };
 
   return (
     <nav className="navbar">
@@ -113,8 +113,13 @@ export default function Navbar({ currentPage, setCurrentPage, profileMenu, onTog
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          {/* Profile Drawer الآن يُعرَض من App.tsx مباشرة بجانب محتوى الصفحة، وليس هنا */}
+          {/* Profile Drawer — القائمة الموحّدة الوحيدة في التطبيق */}
+          <ProfileDrawer
+            isOpen={profileMenu}
+            onClose={() => setProfileMenu(false)}
+          />
 
+          {/* صورة البروفايل — عرض فقط، بلا قائمة منسدلة خاصة بها */}
           <div className="profile-avatar-btn" title={user?.name}>
             <img src={user?.avatar} alt={user?.name} />
             <span className="profile-btn-badge">
@@ -122,8 +127,8 @@ export default function Navbar({ currentPage, setCurrentPage, profileMenu, onTog
             </span>
           </div>
 
-          {/* Menu Toggle — يفتح القائمة الموحّدة (ProfileDrawer المُعرَّفة في App.tsx) */}
-          <button className="icon-btn mobile-menu-btn" onClick={onToggleProfileMenu} title="القائمة">
+          {/* زر القائمة — يفتح القائمة الموحّدة (ProfileDrawer) */}
+          <button className="icon-btn mobile-menu-btn" onClick={() => setProfileMenu(!profileMenu)} title="القائمة">
             {profileMenu ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>

@@ -33,8 +33,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  const go = (page: string | null) => {
-    if (!page) return;
+  const go = (page: string) => {
     navigateTo(page);
     onClose();
   };
@@ -42,25 +41,25 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
   const MY_BADGE: BadgeType = "blue";
 
   const services = [
-    { icon: Users, label: "الأصدقاء", page: "friends", color: "#3B82F6", badge: null },
-    { icon: MessageCircle, label: "الرسائل", page: "messages", color: "#8B5CF6", badge: "7", badgeColor: "#EF4444" },
-    { icon: Users, label: "المجموعات", page: "groups", color: "#10B981", badge: null },
-    { icon: Flag, label: "الصفحات", page: null, color: "#F59E0B", badge: null },
-    { icon: ShoppingBag, label: "السوق", page: "marketplace", color: "#EC4899", badge: null },
-    { icon: Gamepad2, label: "الألعاب", page: "games", color: "#6366F1", badge: null },
-    { icon: Sparkles, label: "YouAI", page: "ai-assistant", color: "#7C3AED", badge: "جديد", badgeColor: "#10B981" },
-    { icon: Search, label: "البحث الذكي", page: "smart-search", color: "#06B6D4", badge: null },
-    { icon: Calendar, label: "الأحداث", page: null, color: "#F97316", badge: null },
-    { icon: Star, label: "النجوم والهدايا", page: "stars", color: "#FBBF24", badge: null },
-    { icon: Truck, label: "YouMe Delivery", page: "delivery", color: "#3B82F6", badge: "جديد", badgeColor: "#10B981" },
-    { icon: Car, label: "YouMe Ride", page: "ride", color: "#EF4444", badge: "قريباُ", badgeColor: "#6366F1" },
+    { icon: Users, label: "الأصدقاء", color: "#3B82F6", badge: null },
+    { icon: MessageCircle, label: "الرسائل", color: "#8B5CF6", badge: "7", badgeColor: "#EF4444" },
+    { icon: Users, label: "المجموعات", color: "#10B981", badge: null },
+    { icon: Flag, label: "الصفحات", color: "#F59E0B", badge: null },
+    { icon: ShoppingBag, label: "السوق", color: "#EC4899", badge: null },
+    { icon: Gamepad2, label: "الألعاب", color: "#6366F1", badge: null },
+    { icon: Sparkles, label: "YouAI", color: "#7C3AED", badge: "جديد", badgeColor: "#10B981" },
+    { icon: Search, label: "البحث الذكي", color: "#06B6D4", badge: null },
+    { icon: Calendar, label: "الأحداث", color: "#F97316", badge: null },
+    { icon: Star, label: "النجوم والهدايا", color: "#FBBF24", badge: null },
+    { icon: Truck, label: "YouMe Delivery", color: "#3B82F6", badge: "جديد", badgeColor: "#10B981" },
+    { icon: Car, label: "YouMe Ride", color: "#EF4444", badge: "قريباُ", badgeColor: "#6366F1" },
   ];
 
   const settings = [
     { icon: Settings, label: "الإعدادات", action: () => go("settings") },
     { icon: Globe, label: "اللغة", action: () => {}, value: "العربية" },
     { icon: darkMode ? Sun : Moon, label: darkMode ? "وضع النهار" : "وضع الليل", action: () => setDarkMode(!darkMode), isSwitch: true },
-    { icon: HelpCircle, label: "المساعدة والدعم", action: () => go(null) },
+    { icon: HelpCircle, label: "المساعدة والدعم", action: () => go("support") },
   ];
 
   return (
@@ -107,7 +106,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
           </div>
           <div className="ympd-services-grid">
             {services.map((s, i) => (
-              <button key={i} className="ympd-service-card" onClick={() => go(s.page)}>
+              <button key={i} className="ympd-service-card" onClick={() => go(s.label)}>
                 <div className="ympd-service-icon-wrap" style={{ color: s.color }}>
                   <s.icon size={24} />
                   {s.badge && <span className="ympd-service-badge" style={{ background: s.badgeColor }}>{s.badge}</span>}
@@ -150,8 +149,8 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
           <div className="ympd-bottom-nav">
             <button className="ympd-nav-item ympd-nav-active" onClick={() => go("home")}><Home size={20} /><span>الرئيسية</span></button>
             <button className="ympd-nav-item" onClick={() => go("groups")}><Users size={20} /><span>المجموعات</span></button>
-            <button className="ympd-nav-plus-btn" onClick={() => go(null)}><Plus size={24} /></button>
-            <button className="ympd-nav-item" onClick={() => go(null)}><Zap size={20} /><span>النشاط</span></button>
+            <button className="ympd-nav-plus-btn" onClick={() => go("create")}><Plus size={24} /></button>
+            <button className="ympd-nav-item" onClick={() => go("activity")}><Zap size={20} /><span>النشاط</span></button>
             <button className="ympd-nav-item" onClick={() => go("profile")}><User size={20} /><span>الملف</span></button>
           </div>
         )}
